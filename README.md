@@ -3,7 +3,7 @@ redis_pool
 
 A high performant Erlang pool for [eredis][1] based on [erlpool][2] 
 
-Wy another redis pool
+Why another redis pool
 ------------------
 
 Beside the fact that the most popular project in this area [eredis_pool][3] has a low activity in the last time, it has also the following problems:
