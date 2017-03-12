@@ -35,7 +35,7 @@ You can define your pools inside `app.config` :
                 {size, 10},
                 {host, "127.0.0.1"},
                 {port, 6379},
-                {database, undefined},
+                {database, 0},
                 {reconnect_sleep, 100}
             ]}
         ]}
