@@ -56,37 +56,73 @@ stop_pool(PoolName) ->
     {ok, return_value()} | {error, redis_error()}.
 
 q(PoolName, Command) ->
-    eredis:q(erlpool:pid(PoolName), Command).
+    try
+        eredis:q(erlpool:pid(PoolName), Command)
+    catch _:Error ->
+        handle_exception(Error, Command)
+    end.
 
 -spec q(atom(), [any()], timeout()) ->
     {ok, return_value()} | {error, redis_error()}.
 
 q(PoolName, Command, Timeout) ->
-    eredis:q(erlpool:pid(PoolName), Command, Timeout).
+    try
+        eredis:q(erlpool:pid(PoolName), Command, Timeout)
+    catch _:Error ->
+        handle_exception(Error, Command)
+    end.
 
 -spec qp(atom(), pipeline()) ->
-    [{ok, return_value()} | {error, binary()}] | {error, no_connection}.
+    [{ok, return_value()} | {error, binary()}] | {error, redis_error()}.
 
 qp(PoolName, Pipeline) ->
-    eredis:qp(erlpool:pid(PoolName), Pipeline).
+    try
+        eredis:qp(erlpool:pid(PoolName), Pipeline)
+    catch _:Error ->
+        handle_exception(Error, Pipeline)
+    end.
 
 -spec qp(atom(), pipeline(), timeout()) ->
-    [{ok, return_value()} | {error, binary()}] | {error, no_connection}.
+    [{ok, return_value()} | {error, binary()}] | {error, redis_error()}.
 
 qp(PoolName, Pipeline, Timeout) ->
-    eredis:qp(erlpool:pid(PoolName), Pipeline, Timeout).
+    try
+        eredis:qp(erlpool:pid(PoolName), Pipeline, Timeout)
+    catch _:Error ->
+        handle_exception(Error, Pipeline)
+    end.
 
--spec q_noreply(atom(), [any()]) -> ok.
+-spec q_noreply(atom(), [any()]) ->
+    ok | {error, redis_error()}.
 
 q_noreply(PoolName, Command) ->
-    eredis:q_noreply(erlpool:pid(PoolName), Command).
+    try
+        eredis:q_noreply(erlpool:pid(PoolName), Command)
+    catch _:Error ->
+        handle_exception(Error, Command)
+    end.
 
--spec q_async(atom(), [any()]) -> ok.
+-spec q_async(atom(), [any()]) ->
+    ok | {error, redis_error()}.
 
 q_async(PoolName, Command) ->
-    eredis:q_async(erlpool:pid(PoolName), Command).
+    try
+        eredis:q_async(erlpool:pid(PoolName), Command)
+    catch _:Error ->
+        handle_exception(Error, Command)
+    end.
 
--spec q_async(atom(), [any()], pid()|atom()) -> ok.
+-spec q_async(atom(), [any()], pid()|atom()) ->
+    ok | {error, redis_error()}.
 
 q_async(PoolName, Command, Pid) ->
-    eredis:q_async(erlpool:pid(PoolName), Command, Pid).
+    try
+        eredis:q_async(erlpool:pid(PoolName), Command, Pid)
+    catch _:Error ->
+        handle_exception(Error, Command)
+    end.
+
+handle_exception({Error, _}, Command) ->
+    {error, {Error, Command}};
+handle_exception(Error, Command) ->
+    {error, {Error, Command}}.
