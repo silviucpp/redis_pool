@@ -68,9 +68,17 @@ The supported options for a pool are:
 - `reconnect_sleep`: in case connection to server is lost after how many milliseconds should try to reconnect (integer, default to `100`)
 - `connect_timeout`: how many milliseconds will stay in connect until timeout (integer, default `5000`)
 
-The API is identical with the one from [eredis][1].
+The API is identical with the one from [eredis][1] exceptions making the transaction support:
 
-Benchmark:
+Transactions
+-------
+
+Transactions are implemented using pipeline, this means that you need to send the list of the commands that you want to execute in the same transaction:
+
+```erlang 
+redis_pool:transaction(mypool, [["SET", var1, "1"], ["LPUSH", var2, "3"], ["LPUSH", var2, "2"]]).
+{ok,[<<"OK">>,<<"1">>,<<"2">>]}
+```
 
 Performance testing
 -----------

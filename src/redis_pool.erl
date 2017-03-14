@@ -16,7 +16,8 @@
     qp/3,
     q_noreply/2,
     q_async/2,
-    q_async/3
+    q_async/3,
+    transaction/2
 ]).
 
 -spec start() -> ok  | {error, reason()}.
@@ -127,6 +128,22 @@ q_async(PoolName, Command, Pid) ->
         eredis:q_async(erlpool:pid(PoolName), Command, Pid)
     catch _:Error ->
         handle_exception(Error, Command)
+    end.
+
+-spec transaction(atom(), pipeline()) ->
+    {ok, [return_value()]} | {error, redis_error()}.
+
+transaction(PoolName, Commands0) ->
+    Commands = [[<<"MULTI">>] | Commands0] ++ [[<<"EXEC">>]],
+    try
+        case eredis:qp(erlpool:pid(PoolName), Commands) of
+            Rs when is_list(Rs) ->
+                lists:last(Rs);
+            Rs ->
+                Rs
+        end
+    catch _:Error ->
+        handle_exception(Error, Commands)
     end.
 
 handle_exception({Error, _}, Command) ->
