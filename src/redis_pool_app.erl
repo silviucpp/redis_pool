@@ -9,6 +9,7 @@ start(_StartType, _StartArgs) ->
     redis_pool_sup:start_link().
 
 stop(_State) ->
+    erlpool:stop_group(redis_pool),
     ok.
 
 start_pools() ->

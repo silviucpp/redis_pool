@@ -9,6 +9,7 @@
     stop/0,
     start_pool/2,
     stop_pool/1,
+    restart_pool/1,
     q/2,
     q/3,
     qp/2,
@@ -44,6 +45,7 @@ start_pool(PoolName, PoolArgs0) ->
     Size = proplists:get_value(size, PoolArgs0, undefined),
     ok = erlpool:start_pool(PoolName, [
         {size, Size},
+        {group, redis_pool},
         {start_mfa, {eredis, start_link, [lists:keydelete(size, 1, PoolArgs0)]}}
     ]).
 
@@ -51,6 +53,11 @@ start_pool(PoolName, PoolArgs0) ->
 
 stop_pool(PoolName) ->
     erlpool:stop_pool(PoolName).
+
+-spec restart_pool(atom()) -> ok | {error, reason()}.
+
+restart_pool(PoolName) ->
+    erlpool:restart_pool(PoolName).
 
 -spec q(atom(), [any()]) ->
     {ok, return_value()} | {error, redis_error()}.
