@@ -1,7 +1,4 @@
 -module(redis_pool).
--author("silviu.caragea").
-
--include("redis_pool.hrl").
 
 -export([
     start/0,
@@ -20,12 +17,20 @@
     transaction/2
 ]).
 
--spec start() -> ok  | {error, reason()}.
+-type redis_pool_option() :: erlpool:pool_option() | eredis:option().
+-type reason() :: term().
+-type return_value() :: eredis:return_value().
+-type redis_error() :: binary() | no_connection | tuple().
+-type pipeline() :: eredis:pipeline().
+
+-spec start() ->
+    ok | {error, reason()}.
 
 start() ->
     start(temporary).
 
--spec start(permanent | transient | temporary) -> ok | {error, reason()}.
+-spec start(permanent | transient | temporary) ->
+    ok | {error, reason()}.
 
 start(Type) ->
     case application:ensure_all_started(redis_pool, Type) of
@@ -35,12 +40,14 @@ start(Type) ->
             Other
     end.
 
--spec stop() -> ok.
+-spec stop() ->
+    ok.
 
 stop() ->
     application:stop(redis_pool).
 
--spec start_pool(atom(), [redis_pool_option()]) -> ok | {error, reason()}.
+-spec start_pool(atom(), [redis_pool_option()]) ->
+    ok | {error, reason()}.
 
 start_pool(PoolName, PoolArgs0) ->
     Size = proplists:get_value(size, PoolArgs0, undefined),
@@ -50,12 +57,14 @@ start_pool(PoolName, PoolArgs0) ->
         {start_mfa, {eredis, start_link, [lists:keydelete(size, 1, PoolArgs0)]}}
     ]).
 
--spec stop_pool(atom()) -> ok | {error, reason()}.
+-spec stop_pool(atom()) ->
+    ok | {error, reason()}.
 
 stop_pool(PoolName) ->
     erlpool:stop_pool(PoolName).
 
--spec restart_pool(atom()) -> ok | {error, reason()}.
+-spec restart_pool(atom()) ->
+    ok | {error, reason()}.
 
 restart_pool(PoolName) ->
     erlpool:restart_pool(PoolName).
