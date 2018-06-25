@@ -1,6 +1,6 @@
 {application, redis_pool, [
     {description, "erlang pool for redis based on eredis and erlpool"},
-    {vsn, "1.2"},
+    {vsn, "1.3"},
     {registered, []},
     {applications, [kernel, stdlib, eredis, erlpool]},
     {mod, {redis_pool_app, []}},
